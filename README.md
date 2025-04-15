@@ -12,7 +12,7 @@ A lightweight, self-contained Sonos controller consisting of:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/Sonos-NowPlaying.git
+gh repo clone sambatesdesign/Sonos-NowPlaying
 cd Sonos-NowPlaying
 ```
 
