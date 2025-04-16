@@ -5,17 +5,33 @@
   "author": "Sam Bates",
   "license": "MIT",
   "main": "electron-main.js",
-  "scripts": {
-    "start": "electron .",
-    "test": "echo \"No tests yet\" && exit 0",
-    "build": "electron-packager . SonosNowBackend --platform=darwin --arch=arm64 --overwrite"
-  },
   "keywords": [
     "sonos",
     "electron",
     "backend",
     "express"
   ],
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"No tests yet\" && exit 0",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.sambates.sonosnowbackend",
+    "productName": "Sonos Now Playing",
+    "files": [
+      "**/*",
+      "!**/*.md",
+      "!**/*.log",
+      "!**/test/**",
+      "!dist/",
+      "!build/"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "sonos-icon.icns"
+    }
+  },
   "dependencies": {
     "@svrooij/sonos": "^2.5.0",
     "cors": "^2.8.5",
@@ -23,6 +39,6 @@
   },
   "devDependencies": {
     "electron": "^35.1.5",
-    "electron-packager": "^17.1.1"
+    "electron-builder": "^26.0.12"
   }
 }

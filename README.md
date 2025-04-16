@@ -2,8 +2,17 @@
 
 A lightweight, self-contained Sonos controller consisting of:
 
-- **Backend** (Node.js): Local API server for Sonos speaker discovery and control
+- **Backend** (Node.js + Electron): Local API server with optional macOS app for Sonos speaker discovery and control
 - **Frontend** (React Native): Wall-mounted Android UI for playback and volume control
+
+---
+
+## 📦 Prebuilt Downloads
+
+If you don’t want to build this project manually, you can download the ready-made builds from the [GitHub Releases](https://github.com/sambatesdesign/Sonos-NowPlaying/releases) page:
+
+- ✅ **Android APK** (for sideloading to your wall-mounted screen)
+- ✅ **macOS Backend App** (Electron DMG)
 
 ---
 
@@ -24,7 +33,7 @@ cd Sonos-NowPlaying
 
 `Backend/`
 
-### 🔧 Setup & Run
+### 🔧 Setup & Run (Classic Node.js)
 
 ```bash
 cd Backend
@@ -32,14 +41,17 @@ npm install
 node main.js
 ```
 
-This will start a local server that:
+Or run as a macOS **Electron app** (if building from source):
 
-- Discovers Sonos players
-- Exposes endpoints like:
-  - `/players` – list speakers
-  - `/status?host=...` – now playing info
-  - `/control` – play/pause/skip
-  - `/volume` – set volume
+```bash
+npm run start
+```
+
+You can also build a native `.dmg`:
+
+```bash
+npm run dist
+```
 
 ---
 
@@ -109,6 +121,7 @@ Below is a screenshot of the SonosNow React Native app running on a wall-mounted
 ```
 Sonos-NowPlaying/
 ├── Backend/
+│   ├── electron-main.js
 │   ├── main.js
 │   ├── package.json
 │   └── ...
@@ -119,3 +132,5 @@ Sonos-NowPlaying/
 │   └── ...
 └── README.md
 ```
+
+---
