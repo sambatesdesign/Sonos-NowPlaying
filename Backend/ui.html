@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sonos Player - Backend Helper</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #D0A264;
+      color: #fff;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .info {
+      margin-bottom: 15px;
+    }
+
+    .info strong {
+      color: #fff;
+    }
+
+    #logOutput {
+      background-color: #fff;
+      color: #000;
+      border-radius: 15px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 13px;
+      height: 200px;
+      overflow-y: scroll;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <img src="logo.png" width="95" height="24">
+
+  <div class="info">
+    <p><strong>💻 Local Backend IP:</strong> <span id="ip">Detecting...</span>:<span id="port">3000</span></p>
+    <small>This is the ip you will need to enter into the frontend app</small>
+  </div>
+
+  <h3>📋 Log Output</h3>
+  <div id="logOutput">[Waiting for logs...]\n</div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    ipcRenderer.on('ip', (_, ip) => {
+      document.getElementById('ip').textContent = ip;
+    });
+
+    ipcRenderer.on('log', (_, msg) => {
+      const logBox = document.getElementById('logOutput');
+      logBox.textContent += msg + '\n';
+      logBox.scrollTop = logBox.scrollHeight;
+    });
+  </script>
+</body>
+</html>

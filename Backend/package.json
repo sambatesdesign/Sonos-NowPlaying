@@ -1,17 +1,28 @@
 {
   "name": "sonosnow-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Node.js backend server for SonosNow powered by @svrooij/sonos, running via Electron.",
+  "author": "Sam Bates",
+  "license": "MIT",
+  "main": "electron-main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron .",
+    "test": "echo \"No tests yet\" && exit 0",
+    "build": "electron-packager . SonosNowBackend --platform=darwin --arch=arm64 --overwrite"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "sonos",
+    "electron",
+    "backend",
+    "express"
+  ],
   "dependencies": {
     "@svrooij/sonos": "^2.5.0",
     "cors": "^2.8.5",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "electron": "^35.1.5",
+    "electron-packager": "^17.1.1"
   }
 }

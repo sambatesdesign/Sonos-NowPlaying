@@ -79,10 +79,6 @@ app.get('/status', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Sonos backend listening on port ${port}`);
-});
-
 app.post('/control', async (req, res) => {
   const { host, action } = req.body;
 
@@ -169,3 +165,9 @@ app.get('/volume', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Prevent Node from exiting (especially important when forked by Electron)
+setInterval(() => {}, 1 << 30);
+
+console.log(`Sonos backend listening on port ${port}`);
+app.listen(port);
