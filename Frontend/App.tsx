@@ -148,8 +148,7 @@ export default function App() {
 
       <View style={styles.container}>
         <TouchableOpacity style={styles.speakerPill} onPress={() => setModalVisible(true)}>
-          <Icon name="musical-notes-outline" size={16} color="#fff" style={{ marginRight: 6 }} />
-          <Text style={styles.speakerText}>{players.find(p => p.host === selectedHost)?.name || 'Select Speaker'}</Text>
+          <Icon name="radio-outline" size={20} color="#fff" />
         </TouchableOpacity>
 
         <Modal transparent animationType="slide" visible={isModalVisible} onRequestClose={() => setModalVisible(false)}>
@@ -185,7 +184,6 @@ export default function App() {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* Album artwork or fallback */}
         <View onTouchEnd={handleTripleTap} style={styles.albumWrapper}>
           {nowPlaying.albumArt ? (
             <Image source={{ uri: nowPlaying.albumArt }} style={styles.albumArtLarge} />
@@ -210,26 +208,29 @@ export default function App() {
           </View>
         </View>
 
-        <Text style={styles.track}>{nowPlaying.title || 'Unknown'}</Text>
-        <Text style={styles.artist}>{nowPlaying.artist}</Text>
+        <View style={styles.metaBlock}>
+          <Text style={styles.track}>{nowPlaying.title || 'Unknown'}</Text>
+          <Text style={styles.artist}>{nowPlaying.artist}</Text>
+        </View>
 
         <View style={styles.volumeRow}>
           <Icon name="volume-low" size={20} color="white" />
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={100}
-            step={1}
-            value={volume}
-            onValueChange={sendVolume}
-            minimumTrackTintColor="#fff"
-            maximumTrackTintColor="#555"
-            thumbTintColor="#fff"
-          />
+          <View style={styles.sliderWrapper}>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={100}
+              step={1}
+              value={volume}
+              onValueChange={sendVolume}
+              minimumTrackTintColor="#fff"
+              maximumTrackTintColor="#555"
+              thumbTintColor="#fff"
+            />
+          </View>
           <Text style={styles.volumeText}>{volume}</Text>
         </View>
 
-        {/* Settings Panel */}
         <Modal visible={settingsVisible} transparent animationType="slide">
           <View style={styles.modalBackdrop}>
             <View style={styles.modalContent}>
@@ -261,52 +262,95 @@ export default function App() {
 const styles = StyleSheet.create({
   background: { flex: 1, resizeMode: 'cover', justifyContent: 'center' },
   overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)' },
-  container: { flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center', paddingBottom: 50 },
-  speakerPill: {
-    flexDirection: 'row', backgroundColor: '#4447', borderRadius: 999, alignItems: 'center',
-    alignSelf: 'flex-start', paddingLeft: 12, paddingRight: 12, height: 36, marginTop: 30, marginBottom: 20,
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 80, // ⬅️ Add large space at bottom
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
   },
-  speakerText: { color: '#fff', fontWeight: '600' },
-  albumWrapper: { borderRadius: 12, overflow: 'hidden', marginBottom: 10 },
-  albumArt: { width: 250, height: 250, borderRadius: 12 },
-  albumFallback: { width: 250, height: 250, borderRadius: 12, backgroundColor: '#111', alignItems: 'center', justifyContent: 'center' },
-  track: { fontSize: 20, fontWeight: 'bold', color: '#fff', marginTop: 5 },
-  artist: { fontSize: 16, color: '#ccc', marginBottom: 5 },
-  controls: { flexDirection: 'row', gap: 30, alignItems: 'center', marginBottom: 5 },
-  volumeRow: { flexDirection: 'row', alignItems: 'center', width: '100%' },
-  slider: { flex: 1, marginHorizontal: 10 },
+  speakerPill: {
+    position: 'absolute',
+    top: 30,
+    left: 20,
+    width: 36,
+    height: 36,
+    backgroundColor: '#4447',
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  albumWrapper: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginTop: 0,
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
+  albumArtLarge: {
+    width: 300,
+    height: 300,
+    borderRadius: 20,
+  },
+  albumFallbackLarge: {
+    width: 300,
+    height: 300,
+    borderRadius: 20,
+    backgroundColor: '#111',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  controlsOverlay: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  metaBlock: {
+    alignItems: 'center',
+    marginTop: 14,
+    marginBottom: 0,
+  },
+  track: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+  },
+  artist: {
+    fontSize: 16,
+    color: '#ccc',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  volumeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 0,
+  },
+  sliderWrapper: {
+    flex: 1,
+    paddingVertical: 12,
+    justifyContent: 'center',
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
   volumeText: { color: '#fff', width: 30, textAlign: 'right' },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
   modalContent: { backgroundColor: '#fff', borderRadius: 10, padding: 20, width: '80%', maxHeight: '60%' },
   modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10, color: '#333' },
   modalItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomColor: '#eee', borderBottomWidth: 1 },
   modalItemText: { fontSize: 16, color: '#333' },
-  albumArtLarge: {
-  width: 300,
-  height: 300,
-  borderRadius: 20,
-},
-
-albumFallbackLarge: {
-  width: 300,
-  height: 300,
-  borderRadius: 20,
-  backgroundColor: '#111',
-  alignItems: 'center',
-  justifyContent: 'center',
-},
-
-controlsOverlay: {
-  position: 'absolute',
-  bottom: 10,
-  left: 0,
-  right: 0,
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-  alignItems: 'center',
-  paddingHorizontal: 20,
-  paddingVertical: 10,
-  borderBottomLeftRadius: 20,
-  borderBottomRightRadius: 20,
-},
 });
