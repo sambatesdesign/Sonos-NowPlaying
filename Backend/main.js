@@ -1,5 +1,6 @@
 const express = require('express');
 const { SonosManager } = require('@svrooij/sonos');
+const fetch = require('node-fetch'); // Add this if you're using fetch in Node.js
 
 const app = express();
 const port = 3000;
@@ -51,27 +52,70 @@ app.get('/status', async (req, res) => {
 
   try {
     await ensureDiscovery();
-
-    if (manager.Devices.length === 0) {
-      return res.status(500).json({ error: 'No Devices available!' });
-    }
-
     const device = manager.Devices.find(d => d.Host === host);
     if (!device) return res.status(404).json({ error: 'Speaker not found for host: ' + host });
 
     const positionInfo = await device.AVTransportService.GetPositionInfo();
     const transportInfo = await device.AVTransportService.GetTransportInfo();
+    const rawTitle = positionInfo.TrackMetaData?.Title || '';
+    const relTime = positionInfo.RelTime || '0:00:00';
+    const duration = positionInfo.TrackDuration || '0:00:00';
+    const transportState = transportInfo.CurrentTransportState || 'UNKNOWN';
 
-    console.log('Full position info:', positionInfo);
-    console.log('Transport info:', transportInfo);
+    const lowerTitle = rawTitle.toLowerCase();
 
+    const bbcMap = {
+      'bbc_radio_one.m3u8': { serviceId: 'bbc_radio_one', stationName: 'BBC Radio 1' },
+      'bbc_radio_two.m3u8': { serviceId: 'bbc_radio_two', stationName: 'BBC Radio 2' },
+      'bbc_radio_three.m3u8': { serviceId: 'bbc_radio_three', stationName: 'BBC Radio 3' },
+      'bbc_radio_fourfm.m3u8': { serviceId: 'bbc_radio_fourfm', stationName: 'BBC Radio 4' },
+      'bbc_radio_five_live.m3u8': { serviceId: 'bbc_radio_five_live', stationName: 'BBC Radio 5 Live' },
+      'bbc_6music.m3u8': { serviceId: 'bbc_6music', stationName: 'BBC Radio 6 Music' }
+    };
+
+    const matchedStation = Object.keys(bbcMap).find(key => lowerTitle.includes(key));
+
+    if (matchedStation) {
+      const { serviceId, stationName } = bbcMap[matchedStation];
+      const essUrl = `https://ess.api.bbci.co.uk/schedules?serviceId=${serviceId}`;
+
+      try {
+        const essRes = await fetch(essUrl);
+        const essData = await essRes.json();
+
+        const now = new Date();
+        const currentShow = essData?.items?.find(item => {
+          const start = new Date(item.published_time?.start);
+          const end = new Date(item.published_time?.end);
+          return start <= now && now <= end;
+        });
+
+        const showName = currentShow?.brand?.title || stationName;
+        const presenter = currentShow?.episode?.title || '';
+
+        const imageUrl = `https://mazespacestudios.com/bbc_radio/${serviceId}.png`;
+
+        return res.json({
+          title: showName,
+          artist: presenter,
+          albumArt: imageUrl,
+          transportState,
+          relTime,
+          duration
+        });
+      } catch (err) {
+        console.warn(`⚠️ ESS fetch failed for ${serviceId}:`, err.message);
+      }
+    }
+
+    // Fallback to original metadata
     res.json({
-      title: positionInfo.TrackMetaData?.Title || 'Unknown',
+      title: rawTitle || 'Unknown',
       artist: positionInfo.TrackMetaData?.Artist || '',
       albumArt: positionInfo.TrackMetaData?.AlbumArtUri || '',
-      transportState: transportInfo.CurrentTransportState || 'UNKNOWN',
-      relTime: positionInfo.RelTime || '0:00:00',
-      duration: positionInfo.TrackDuration || '0:00:00'
+      transportState,
+      relTime,
+      duration
     });
   } catch (err) {
     console.error('Status failed:', err);
