@@ -32,8 +32,8 @@
       "icon": "sonos-icon.icns"
     },
     "win": {
-      "target": "nsis", // this will build a Windows installer (.exe)
-      "icon": "sonos-icon.ico" // required Windows .ico file (ensure it's in your repo)
+      "target": "nsis",
+      "icon": "sonos-icon.ico"
     },
     "nsis": {
       "oneClick": false,
