@@ -1,0 +1,30 @@
+name: Build Electron App
+
+on:
+  push:
+    tags:
+      - 'v*'  # Only build on new version tags like v1.0.0
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Electron App for Windows
+        run: npm run dist
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonosnow-windows-installer
+          path: dist/*.exe
