@@ -3,16 +3,14 @@ name: Build Electron App
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
-
     defaults:
       run:
         working-directory: Backend
-
     steps:
       - uses: actions/checkout@v4
 
@@ -27,8 +25,33 @@ jobs:
       - name: Build Electron App for Windows
         run: npm run dist
 
-      - name: Upload artifact
+      - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: sonosnow-windows-build
           path: Backend/dist/*.exe
+
+  build-mac:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: Backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Electron App for macOS (arm64 + x64)
+        run: npm run dist
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonosnow-mac-build
+          path: Backend/dist/*.dmg

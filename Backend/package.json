@@ -29,7 +29,11 @@
     ],
     "mac": {
       "target": "dmg",
-      "icon": "sonos-icon.icns"
+      "icon": "sonos-icon.icns",
+      "arch": [
+        "x64",
+        "arm64"
+      ]
     },
     "win": {
       "target": "nsis",
