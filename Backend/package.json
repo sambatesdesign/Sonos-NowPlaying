@@ -28,15 +28,11 @@
       "!build/"
     ],
     "mac": {
-      "target": "dmg",
-      "icon": "sonos-icon.icns",
-      "arch": [
-        "x64",
-        "arm64"
-      ]
+      "target": ["dmg"],
+      "icon": "sonos-icon.icns"
     },
     "win": {
-      "target": "nsis",
+      "target": ["nsis"],
       "icon": "sonos-icon.ico"
     },
     "nsis": {
